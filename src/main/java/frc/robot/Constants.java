@@ -61,6 +61,12 @@ public final class Constants {
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
+
+    public static final double kTurnP = 1.0;
+    public static final double kTurnI = 1.0;
+    public static final double kTurnD = 1.0;
+    public static final double kTurnToleranceDeg = 1.0;
+    public static final double kTurnRateToleranceDegPerS = 1.0;
   }
   
   public static final class Pneumatics {

@@ -147,6 +147,10 @@ public class DriveSubsystem extends SubsystemBase {
     m_drive.arcadeDrive(fwd, rot);
   }
 
+  public void stop() {
+    m_drive.stopMotor();
+  }
+
   /**
    * Controls the left and right sides of the drive directly with voltages.
    *
