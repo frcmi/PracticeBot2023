@@ -69,7 +69,9 @@ public final class Constants {
     public static final double kTurnRateToleranceDegPerS = 1.0;
   }
   
-  public static final class Pneumatics {
+  public static final class PneumaticConstants {
+        public static final int compressorPort = 0;
+
         //ids for compressors and solenoids
         public static final int extendSolenoidPortLeft = 0;
         public static final int retractSolenoidPortLeft = 1;

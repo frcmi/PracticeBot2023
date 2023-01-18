@@ -93,10 +93,18 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double fwd = -m_robotContainer.m_driverController.getLeftY() * DriveConstants.kMovementMultiplier;
-    double rot = -m_robotContainer.m_driverController.getRightX() * DriveConstants.kMovementMultiplier;
+    var controller = m_robotContainer.m_driverController;
+    var drive = m_robotContainer.m_robotDrive;
+    var pneumatics = m_robotContainer.pneumatics;
+
+    double fwd = -controller.getLeftY() * DriveConstants.kMovementMultiplier;
+    double rot = -controller.getRightX() * DriveConstants.kMovementMultiplier;
 
     m_robotContainer.m_robotDrive.arcadeDrive(fwd, rot);
+
+    if (controller.getAButtonPressed()) {
+      pneumatics.togglePiston();
+    }
   }
 
   @Override
