@@ -12,6 +12,7 @@ import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -39,7 +40,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     Trigger xTrigger = new JoystickButton(m_driverController, XboxController.Button.kX.value);
-    xTrigger.onTrue(pneumatics.toggleCommand());
+    Trigger yTrigger = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+
+    xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
+    yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
   }
 
   /**

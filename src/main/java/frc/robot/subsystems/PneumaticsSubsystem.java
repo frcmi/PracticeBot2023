@@ -23,10 +23,8 @@ public class PneumaticsSubsystem extends SubsystemBase {
   }
 
   public void extendPiston() {
-    if (!compressor.getPressureSwitchValue()) {
-      solenoidLeft.set(Value.kForward);
-      solenoidRight.set(Value.kForward);
-    }
+    solenoidLeft.set(Value.kForward);
+    solenoidRight.set(Value.kForward);
   }
 
   public void stopPiston() {
@@ -44,9 +42,5 @@ public class PneumaticsSubsystem extends SubsystemBase {
       extendPiston();
     else
       reversePiston();
-  }
-
-  public Command toggleCommand() {
-    return Commands.run(() -> togglePiston(), this);
   }
 }

@@ -100,7 +100,7 @@ public class Robot extends TimedRobot {
     double fwd = -controller.getLeftY() * DriveConstants.kMovementMultiplier;
     double rot = -controller.getRightX() * DriveConstants.kMovementMultiplier;
 
-    m_robotContainer.m_robotDrive.arcadeDrive(fwd, rot);
+    drive.arcadeDrive(fwd, rot);
 
     if (controller.getAButtonPressed()) {
       pneumatics.togglePiston();
