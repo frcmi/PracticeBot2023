@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PneumaticConstants;
 
 public class PneumaticsSubsystem extends SubsystemBase {
-  Compressor compressor = new Compressor(PneumaticConstants.compressorPort, PneumaticsModuleType.CTREPCM);
+  Compressor compressor = new Compressor(PneumaticConstants.compressorPort, PneumaticsModuleType.REVPH);
 
   DoubleSolenoid solenoidLeft = new DoubleSolenoid(
-    PneumaticsModuleType.CTREPCM, PneumaticConstants.extendSolenoidPortLeft, PneumaticConstants.retractSolenoidPortLeft);
+    PneumaticsModuleType.REVPH, PneumaticConstants.extendSolenoidPortLeft, PneumaticConstants.retractSolenoidPortLeft);
   DoubleSolenoid solenoidRight = new DoubleSolenoid(
-    PneumaticsModuleType.CTREPCM, PneumaticConstants.extendSolenoidPortRight, PneumaticConstants.retractSolenoidPortRight);
+    PneumaticsModuleType.REVPH, PneumaticConstants.extendSolenoidPortRight, PneumaticConstants.retractSolenoidPortRight);
 
   private boolean toggleState = true; // Set to true so on first toggle will extend
   public PneumaticsSubsystem() {

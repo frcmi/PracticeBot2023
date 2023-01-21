@@ -16,10 +16,10 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class DriveConstants {
-    public static final double kMovementMultiplier = 0.1;
+    public static final double kMovementMultiplier = 0.5;
 
     //change ports, measurements
-    public static final int kPigeonPort = 1;
+    public static final int kPigeonPort = 0;
 
     public static final int kLeftMotor1Port = 5;
     public static final int kLeftMotor2Port = 4;
@@ -70,7 +70,7 @@ public final class Constants {
   }
   
   public static final class PneumaticConstants {
-        public static final int compressorPort = 0;
+        public static final int compressorPort = 1;
 
         //ids for compressors and solenoids
         public static final int extendSolenoidPortLeft = 0;
