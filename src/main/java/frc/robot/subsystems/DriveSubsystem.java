@@ -20,6 +20,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
+import com.kauailabs.navx.frc.AHRS;
+
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
   WPI_TalonFX front_left = new WPI_TalonFX(DriveConstants.kLeftMotor1Port);
@@ -36,8 +38,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   // The gyro sensor (Pigeon 2)
-  private final WPI_Pigeon2 pigeon = new WPI_Pigeon2(DriveConstants.kPigeonPort);
-  private final Gyro m_gyro = pigeon;
+  private final AHRS navX = new AHRS();
+  // private final  pigeon = new WPI_Pigeon2(DriveConstants.kPigeonPort);
+  private final Gyro m_gyro = navX;
 
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
