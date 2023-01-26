@@ -32,7 +32,7 @@ public final class Constants {
 
     public static final int kEncoderCPR = 2048;
     public static final double kWheelDiameterMeters = 0.1524; //I don't fucking know. Need to measure and calculate
-    public static final double kGearRatio = (double) 128/11; //Change I think
+    public static final double kGearRatio = (double) 1054/99; //Change I think
     public static final double kEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         (kWheelDiameterMeters * Math.PI) / kEncoderCPR * kGearRatio;
@@ -55,8 +55,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1;
+    public static final double kMaxSpeedMetersPerSecond = 0.1;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.1;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
