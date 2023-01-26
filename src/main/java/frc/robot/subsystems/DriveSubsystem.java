@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -51,7 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double y_Displacement = 0.0; 
   private double x_Displacement = 0.0; 
   private final double two = 2.0; 
-  private String i_j_Displacement = ""; 
+  private String i_j_Displacement = "";
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     front_left.configFactoryDefault();
