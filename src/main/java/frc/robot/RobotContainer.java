@@ -25,6 +25,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoTrajectory;
 import frc.robot.commands.Autos;
+import frc.robot.commands.MoveMeters;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -69,8 +70,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-      AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
-
-      return autoTrajectory.DoAutoTrajectory(m_robotDrive);
+    return new MoveMeters(1, m_robotDrive);
   }
 }
