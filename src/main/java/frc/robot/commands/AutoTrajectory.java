@@ -1,19 +1,14 @@
 package frc.robot.commands;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -74,8 +69,8 @@ public class AutoTrajectory extends CommandBase {
                     DriveConstants.kaVoltSecondsSquaredPerMeter),
                 DriveConstants.kDriveKinematics,
                 m_robotDrive::getWheelSpeeds,
-                new PIDController(DriveConstants.kPDriveVel, 0, 0),
-                new PIDController(DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(AutoConstants.kTurnP, AutoConstants.kTurnI, AutoConstants.kTurnD),
+                new PIDController(AutoConstants.kTurnP, AutoConstants.kTurnI, AutoConstants.kTurnD),
                 // RamseteCommand passes volts to the callback
                 m_robotDrive::tankDriveVolts,
                 m_robotDrive);
