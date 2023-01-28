@@ -16,18 +16,28 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-/** A command that will turn the robot to the specified angle. */
+/** A command that will move the robot forward for the specified amount of meeters. */
 
 public class MoveMeters extends RamseteCommand {
-    static SimpleMotorFeedforward simpleMotorFeedforward = new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter, DriveConstants.kaVoltSecondsSquaredPerMeter);
-    static PIDController pidController = new PIDController(0.1,0,0);
-
+    //feed foward class for autonomous command
+    static SimpleMotorFeedforward simpleMotorFeedforward = new SimpleMotorFeedforward(
+        DriveConstants.ksVolts, 
+        DriveConstants.kvVoltSecondsPerMeter, 
+        DriveConstants.kaVoltSecondsSquaredPerMeter);
+    //pid class for autonomous command
+    static PIDController pidController = new PIDController(
+        AutoConstants.kTurnP,
+        AutoConstants.kTurnI,
+        AutoConstants.kTurnD);
+    //constraints so it doesnt have a robo-lution
     static  DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
         simpleMotorFeedforward, 
-        DriveConstants.kDriveKinematics, 1);
+        DriveConstants.kDriveKinematics, 
+        1);
     static DifferentialDriveKinematicsConstraint kinematicsConstraint = new DifferentialDriveKinematicsConstraint(
-        DriveConstants.kDriveKinematics, 0.1);
-
+        DriveConstants.kDriveKinematics, 
+        0.1);
+    //config for the ramsete command 
     static TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -35,9 +45,9 @@ public class MoveMeters extends RamseteCommand {
         .addConstraint(voltageConstraint)
         .addConstraint(kinematicsConstraint);
     /**
-     * Turns to robot to the specified angle.
+     * Moves robot to specified distance.
      * @param meters Amount of meters to travel
-     * @param drive              The drive subsystem to use
+     * @param drive  The drive subsystem to use
      */
     public MoveMeters(double meters, DriveSubsystem drive) {
         super(TrajectoryGenerator.generateTrajectory(

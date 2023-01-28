@@ -89,6 +89,11 @@ public class DriveSubsystem extends SubsystemBase {
         getLeftEncoderDistance(), 
         getRightEncoderDistance());
 
+    front_right.feed();
+    front_left.feed();
+    back_right.feed();
+    back_left.feed();
+    
     m_field.setRobotPose(m_odometry.getPoseMeters());
 
     x_Displacement = m_odometry.getPoseMeters().getX(); 
