@@ -76,7 +76,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    System.out.println("volts to left motor: " + m_robotContainer.m_robotDrive.getWheelSpeeds().leftMetersPerSecond + "\nvolts to right motor: " + m_robotContainer.m_robotDrive.getWheelSpeeds().rightMetersPerSecond);
   }
 
   @Override

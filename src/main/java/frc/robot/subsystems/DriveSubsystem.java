@@ -166,6 +166,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rightVolts the commanded right output
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
+    System.out.println("left is " + leftVolts + "\nright is " + rightVolts + "\nspeeds are " + getWheelSpeeds().leftMetersPerSecond + " and " + getWheelSpeeds().rightMetersPerSecond);
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
     m_drive.feed();
