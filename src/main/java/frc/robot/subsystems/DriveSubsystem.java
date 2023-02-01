@@ -90,7 +90,8 @@ public class DriveSubsystem extends SubsystemBase {
         getLeftEncoderDistance(), 
         getRightEncoderDistance());
 
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    Pose2d pose = m_odometry.getPoseMeters();
+    m_field.setRobotPose(pose);
 
     x_Displacement = m_odometry.getPoseMeters().getX(); 
     y_Displacement = m_odometry.getPoseMeters().getY(); 
@@ -102,6 +103,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     SmartDashboard.putString("Rectangular Displacement", i_j_Displacement);
 
+    // Just throw ALL the data into console for debug, comment out later
+    String logMessage = "Motor voltage: L-" + front_left.getMotorOutputVoltage() + "V, R-" + front_right.getMotorOutputVoltage() + "V"; 
+    logMessage += "\nMotor percent: L-" + front_left.getMotorOutputPercent() + "%, R-" + front_right.getMotorOutputPercent() + "%"; 
+    logMessage += "\nEncoder distance: L-" + getLeftEncoderDistance() + ", R-" + front_right.getMotorOutputPercent();
+    logMessage += "\nPose position: X-" + pose.getX() + "m, Y-" + pose.getY();  
+    System.out.println(logMessage);
   }
 
   public double getLeftEncoderDistance() {
