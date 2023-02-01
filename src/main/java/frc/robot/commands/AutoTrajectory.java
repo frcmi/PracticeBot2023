@@ -49,23 +49,19 @@ public class AutoTrajectory extends CommandBase {
                 .addConstraint(autoVoltageConstraint)
                 .addConstraint(new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, AutoConstants.kMaxSpeedMetersPerSecond));
 
-        // An example trajectory to follow.  All units in meters.
-        Trajectory goOneMeter =
+        // All units in meters
+        Trajectory smallPath =
             TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(0.25, 0.25), new Translation2d(0.5, -0.25)),
-                // End 1 meters straight ahead of where we started, facing forward
-                new Pose2d(1, 0, new Rotation2d(0)),
-                // Pass config
+                List.of(new Translation2d(1, 0)),
+                new Pose2d(3, 0, new Rotation2d(0)),
                 config);
         
-        Trajectory goTwoMeters = goOneMeter.concatenate(goOneMeter);
+        // Trajectory goTwoMeters = goOneMeter.concatenate(goOneMeter);
         
         ramseteCommand =
             new RamseteCommand(
-                goTwoMeters,
+                smallPath,
                 m_robotDrive::getPose,
                 new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
                 new SimpleMotorFeedforward(
