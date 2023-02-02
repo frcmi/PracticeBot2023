@@ -76,7 +76,7 @@ public class AutoTrajectory extends CommandBase {
                 m_robotDrive::tankDriveVolts,
                 m_robotDrive);
 
-        m_robotDrive.resetOdometry(goOneMeter.getInitialPose());
+        m_robotDrive.resetOdometry(smallPath.getInitialPose());
     }
 
     public CommandBase DoAutoTrajectory(DriveSubsystem driveSubsystem) {

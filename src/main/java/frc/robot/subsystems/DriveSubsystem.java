@@ -112,11 +112,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getLeftEncoderDistance() {
-    return Math.abs((front_left.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse));
+    return front_left.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse * 10;
   }
 
   public double getRightEncoderDistance() {
-    return Math.abs((front_right.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse)) ;
+    return front_right.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse * 10;
   }
 
   /**
@@ -134,8 +134,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() { //in m/s
-    return new DifferentialDriveWheelSpeeds(Math.abs((front_left.getSelectedSensorVelocity() * DriveConstants.kEncoderDistancePerPulse)), 
-    Math.abs(front_right.getSelectedSensorVelocity()* DriveConstants.kEncoderDistancePerPulse));
+    return new DifferentialDriveWheelSpeeds(getLeftEncoderDistance(), getRightEncoderDistance());
   }
 
   /**
