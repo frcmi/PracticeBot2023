@@ -87,6 +87,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    front_left.feed();
+    front_right.feed();
+    back_left.feed();
+    back_right.feed();
+
     // Update the odometry in the periodic block
     m_odometry.update(
         getHeading(), 
@@ -97,7 +102,9 @@ public class DriveSubsystem extends SubsystemBase {
     m_field.setRobotPose(pose);
 
     x_Displacement = m_odometry.getPoseMeters().getX(); 
-    y_Displacement = m_odometry.getPoseMeters().getY(); 
+    y_Displacement = m_odometry.getPoseMeters().getY();
+    
+    System.out.println("X-Displacement: " + x_Displacement + "\rY-Displacement: " + y_Displacement);
     i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
    
     SmartDashboard.putString("Polar Displacement", "[" + Math.sqrt(Math.pow(x_Displacement, 
@@ -179,6 +186,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
+    System.out.println("Left Volts: " + leftVolts + "\rRight Volts: " + rightVolts);
+    System.out.println("Speeds: " + getWheelSpeeds());
     m_drive.feed();
   }
 

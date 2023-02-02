@@ -39,7 +39,7 @@ public class AutoTrajectory extends CommandBase {
                 DriveConstants.kvVoltSecondsPerMeter,
                 DriveConstants.kaVoltSecondsSquaredPerMeter),
             DriveConstants.kDriveKinematics,
-            10);
+            1);
 
         TrajectoryConfig config =
             new TrajectoryConfig(
