@@ -12,6 +12,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -46,7 +48,7 @@ public class AutoTrajectory extends CommandBase {
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(DriveConstants.kDriveKinematics)
                 // Apply the voltage constraint
-                .addConstraint(autoVoltageConstraint)
+                // .addConstraint(autoVoltageConstraint)
                 .addConstraint(new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, AutoConstants.kMaxSpeedMetersPerSecond));
 
         // All units in meters
@@ -80,7 +82,8 @@ public class AutoTrajectory extends CommandBase {
     }
 
     public CommandBase DoAutoTrajectory(DriveSubsystem driveSubsystem) {
-        return ramseteCommand.andThen(() -> driveSubsystem.tankDriveVolts(0, 0));
+        return Commands.sequence(new InstantCommand(() -> driveSubsystem.resetOdometry(new Pose2d()), driveSubsystem),
+              ramseteCommand, new InstantCommand(() -> driveSubsystem.tankDriveVolts(0, 0)));
     }
     
 }

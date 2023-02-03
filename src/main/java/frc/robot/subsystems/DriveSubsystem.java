@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -79,14 +80,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     resetEncoders();
     zeroHeading();
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0, new Pose2d()); 
+    m_odometry = new DifferentialDriveOdometry(getHeading(), 0, 0, new Pose2d()); 
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        m_gyro.getRotation2d(), 
+        getHeading(), 
         getLeftEncoderDistance(), 
         getRightEncoderDistance());
 
@@ -104,19 +105,26 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putString("Rectangular Displacement", i_j_Displacement);
 
     // Just throw ALL the data into console for debug, comment out later
-    String logMessage = "Motor voltage: L-" + front_left.getMotorOutputVoltage() + "V, R-" + front_right.getMotorOutputVoltage() + "V"; 
-    logMessage += "\nMotor percent: L-" + front_left.getMotorOutputPercent() + "%, R-" + front_right.getMotorOutputPercent() + "%"; 
-    logMessage += "\nEncoder distance: L-" + getLeftEncoderDistance() + ", R-" + front_right.getMotorOutputPercent();
-    logMessage += "\nPose position: X-" + pose.getX() + "m, Y-" + pose.getY();  
-    System.out.println(logMessage);
+    // String logMessage = "Motor voltage: L-" + front_left.getMotorOutputVoltage() + "V, R-" + front_right.getMotorOutputVoltage() + "V"; 
+    // logMessage += "\nMotor percent: L-" + front_left.getMotorOutputPercent() + "%, R-" + front_right.getMotorOutputPercent() + "%"; 
+    // logMessage += "\nEncoder distance: L-" + getLeftEncoderDistance() + ", R-" + front_right.getMotorOutputPercent();
+    // logMessage += "\nPose position: X-" + pose.getX() + "m, Y-" + pose.getY();  
+    // System.out.println(logMessage);
+
+    SmartDashboard.putNumber("Gyro", getHeading().getDegrees());
+    SmartDashboard.putNumber("Left Encoder", getLeftEncoderDistance());
+    SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
+    SmartDashboard.putNumber("x-displacement", x_Displacement);
+    SmartDashboard.putNumber("y-displacement", y_Displacement);
+    SmartDashboard.putNumber("orientation", m_odometry.getPoseMeters().getRotation().getDegrees());
   }
 
   public double getLeftEncoderDistance() {
-    return front_left.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse * 10;
+    return -front_left.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse;
   }
 
   public double getRightEncoderDistance() {
-    return front_right.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse * 10;
+    return back_right.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse;
   }
 
   /**
@@ -134,7 +142,9 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() { //in m/s
-    return new DifferentialDriveWheelSpeeds(getLeftEncoderDistance(), getRightEncoderDistance());
+    return new DifferentialDriveWheelSpeeds(
+    -front_left.getSelectedSensorVelocity() * DriveConstants.kEncoderDistancePerPulse * 10, 
+    front_right.getSelectedSensorVelocity() * DriveConstants.kEncoderDistancePerPulse * 10);
   }
 
   /**
@@ -144,7 +154,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(m_gyro.getRotation2d(), 0, 0, pose);
+    m_odometry.resetPosition(getHeading(), 0, 0, pose);
   }
 
   /**
@@ -209,8 +219,8 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @return the robot's heading in degrees, from -180 to 180
    */
-  public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
+  public Rotation2d getHeading() {
+    return m_gyro.getRotation2d() /* .plus(Rotation2d.fromDegrees(180))*/;
   }
 
   /**

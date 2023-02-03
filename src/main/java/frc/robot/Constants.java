@@ -32,19 +32,19 @@ public final class Constants {
 
     public static final int kEncoderCPR = 2048;
     public static final double kWheelDiameterMeters = 0.1524; //I don't fucking know. Need to measure and calculate
-    public static final double kGearRatio = (double) 1054/99; //Change I think
+    public static final double kGearRatio = (double) 111/11; //Change I think
     public static final double kEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
-        (kWheelDiameterMeters * Math.PI) / kEncoderCPR * kGearRatio;
+        (kWheelDiameterMeters * Math.PI) / (kEncoderCPR * kGearRatio);
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or theoretically
     // for *your* robot's drive.
     // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
     // values for your robot.
-    public static final double ksVolts = 0.19623;
-    public static final double kvVoltSecondsPerMeter = 1.0921;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.27155;
+    public static final double ksVolts = 0.25355;
+    public static final double kvVoltSecondsPerMeter = 2.0519;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.53639;
 
     // Example value only - as above, this must be tuned for your drive!
     public static final double kPDriveVel = 3.7728;
@@ -55,7 +55,7 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 0.1;
+    public static final double kMaxSpeedMetersPerSecond = 0.5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.1;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds

@@ -2,8 +2,8 @@
   "counts per rotation": 2048.0,
   "encoder type": "Built-in",
   "encoding": false,
-  "gearing denominator": 99.0,
-  "gearing numerator": 1054.0,
+  "gearing denominator": 11.0,
+  "gearing numerator": 111.0,
   "gyro": "NavX",
   "gyro ctor": "SerialPort (MXP)",
   "is drivetrain": true,
@@ -22,7 +22,7 @@
     4
   ],
   "primary motors inverted": [
-    false,
+    true,
     true
   ],
   "secondary encoder inverted": false,
@@ -36,7 +36,7 @@
   ],
   "secondary motors inverted": [
     false,
-    true
+    false
   ],
   "velocity measurement period": 100
 }
