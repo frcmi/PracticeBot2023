@@ -48,8 +48,7 @@ public class AutoTrajectory extends CommandBase {
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(DriveConstants.kDriveKinematics)
                 // Apply the voltage constraint
-                // .addConstraint(autoVoltageConstraint)
-                .addConstraint(new DifferentialDriveKinematicsConstraint(DriveConstants.kDriveKinematics, AutoConstants.kMaxSpeedMetersPerSecond));
+                .addConstraint(autoVoltageConstraint);
 
         // All units in meters
         Trajectory smallPath =
@@ -82,8 +81,7 @@ public class AutoTrajectory extends CommandBase {
     }
 
     public CommandBase DoAutoTrajectory(DriveSubsystem driveSubsystem) {
-        return Commands.sequence(new InstantCommand(() -> driveSubsystem.resetOdometry(new Pose2d()), driveSubsystem),
-              ramseteCommand, new InstantCommand(() -> driveSubsystem.tankDriveVolts(0, 0)));
+        return Commands.sequence(driveSubsystem.resetOdometryCmd(new Pose2d()), ramseteCommand, driveSubsystem.stop());
     }
     
 }

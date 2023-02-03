@@ -18,9 +18,6 @@ public final class Constants {
   public static final class DriveConstants {
     public static final double kMovementMultiplier = 0.5;
 
-    //change ports, measurements
-    public static final int kPigeonPort = 0;
-
     public static final int kLeftMotor1Port = 5;
     public static final int kLeftMotor2Port = 4;
     public static final int kRightMotor1Port = 2;
@@ -31,17 +28,12 @@ public final class Constants {
         new DifferentialDriveKinematics(kTrackwidthMeters);
 
     public static final int kEncoderCPR = 2048;
-    public static final double kWheelDiameterMeters = 0.1524; //I don't fucking know. Need to measure and calculate
+    public static final double kWheelDiameterMeters = 0.1524; // 6in wheel diameter
     public static final double kGearRatio = (double) 111/11; //Change I think
     public static final double kEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         (kWheelDiameterMeters * Math.PI) / (kEncoderCPR * kGearRatio);
 
-    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or theoretically
-    // for *your* robot's drive.
-    // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
-    // values for your robot.
     public static final double ksVolts = 0.25355;
     public static final double kvVoltSecondsPerMeter = 2.0519;
     public static final double kaVoltSecondsSquaredPerMeter = 0.53639;

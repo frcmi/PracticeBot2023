@@ -13,8 +13,11 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -103,14 +106,7 @@ public class DriveSubsystem extends SubsystemBase {
     + Math.atan(y_Displacement/x_Displacement) + "]");
 
     SmartDashboard.putString("Rectangular Displacement", i_j_Displacement);
-
-    // Just throw ALL the data into console for debug, comment out later
-    // String logMessage = "Motor voltage: L-" + front_left.getMotorOutputVoltage() + "V, R-" + front_right.getMotorOutputVoltage() + "V"; 
-    // logMessage += "\nMotor percent: L-" + front_left.getMotorOutputPercent() + "%, R-" + front_right.getMotorOutputPercent() + "%"; 
-    // logMessage += "\nEncoder distance: L-" + getLeftEncoderDistance() + ", R-" + front_right.getMotorOutputPercent();
-    // logMessage += "\nPose position: X-" + pose.getX() + "m, Y-" + pose.getY();  
-    // System.out.println(logMessage);
-
+    
     SmartDashboard.putNumber("Gyro", getHeading().getDegrees());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderDistance());
     SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
@@ -147,6 +143,10 @@ public class DriveSubsystem extends SubsystemBase {
     front_right.getSelectedSensorVelocity() * DriveConstants.kEncoderDistancePerPulse * 10);
   }
 
+  public CommandBase resetOdometryCmd(Pose2d pose) {
+    return Commands.runOnce(() -> resetOdometry(pose), this);
+  }
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -167,8 +167,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_drive.arcadeDrive(fwd, rot);
   }
 
-  public void stop() {
-    m_drive.stopMotor();
+  public CommandBase stop() {
+    return Commands.runOnce(m_drive::stopMotor, this);
   }
 
   /**
