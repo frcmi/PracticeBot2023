@@ -31,7 +31,6 @@ public class DriveSubsystem extends SubsystemBase {
   WPI_TalonFX front_left = new WPI_TalonFX(DriveConstants.kLeftMotor1Port);
   WPI_TalonFX back_left = new WPI_TalonFX(DriveConstants.kLeftMotor2Port);
   private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(front_left, back_left);
-
   // The motors on the right side of the drive.
   WPI_TalonFX front_right = new WPI_TalonFX(DriveConstants.kRightMotor1Port);
   WPI_TalonFX back_right = new WPI_TalonFX(DriveConstants.kRightMotor2Port);
@@ -231,4 +230,18 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     return m_gyro.getRate();
   }
+
+  /**
+   * Feeds the motors
+   * 
+   * @return nothing this is void lol
+   * @param no there is none smh
+   */
+  public void feed() {
+    front_right.feed();
+    front_left.feed();
+    back_right.feed();
+    back_left.feed();
+  }
 }
+
