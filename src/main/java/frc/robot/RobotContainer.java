@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.IOException;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -27,6 +28,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoTrajectory;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -44,10 +46,13 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem();
+  public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+  /** The container for the robot. Contains subsystems, OI devices, and commands. 
+   * @throws IOException*/
+  public RobotContainer() throws IOException {
     configureButtonBindings();
+    m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
   }
 
   /**
