@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.BalanceOnChargingStation;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -19,8 +20,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private Command m_doBalanceOnChargingStation;
 
   private RobotContainer m_robotContainer;
+
+  private BalanceOnChargingStation m_balanceOnChargingStation = new BalanceOnChargingStation();
   
 
   /**
@@ -61,6 +65,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_doBalanceOnChargingStation = m_balanceOnChargingStation.DoBalanceOnChargingStation(m_robotContainer.m_robotDrive);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -79,6 +84,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     m_robotContainer.m_robotDrive.feed();
+
+    if(true /* insert actual condition here */) {
+      m_doBalanceOnChargingStation.schedule();
+    }
   }
 
   @Override

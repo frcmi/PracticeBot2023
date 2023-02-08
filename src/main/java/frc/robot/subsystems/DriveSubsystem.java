@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -229,6 +230,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Rotation2d getHeading() {
     return m_gyro.getRotation2d() /* .plus(Rotation2d.fromDegrees(180))*/;
+  }
+
+  public float getPitch() {
+    return navX.getPitch();
   }
 
   /**
