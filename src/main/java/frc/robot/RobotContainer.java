@@ -68,6 +68,7 @@ public class RobotContainer {
 
     xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
     yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
+    balanceTrigger.onTrue(Commands.run(()-> doBalance()));
   }
 
   /**
@@ -82,12 +83,12 @@ public class RobotContainer {
   }
 
   public void doBalance() {
-    if (Math.abs(m_robotDrive.getPitch()) > 7.5) {
+    //if (Math.abs(m_robotDrive.getPitch()) > 7.5) {
       while (Math.abs(m_robotDrive.getPitch()) > 3.0) {
         balance.DoBalanceOnChargingStation(m_robotDrive).execute();
         Timer.delay(0.005);
       }
-    }
+    //}
   }
 
 }
