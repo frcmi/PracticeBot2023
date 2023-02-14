@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.BalanceOnChargingStation;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -39,7 +40,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
-
 
   // The gyro sensor (Pigeon 2)
   private final AHRS navX = new AHRS();
@@ -105,7 +105,7 @@ public class DriveSubsystem extends SubsystemBase {
     x_Displacement = m_odometry.getPoseMeters().getX(); 
     y_Displacement = m_odometry.getPoseMeters().getY();
     
-    System.out.println("X-Displacement: " + x_Displacement + "\rY-Displacement: " + y_Displacement);
+    //System.out.println("X-Displacement: " + x_Displacement + "\rY-Displacement: " + y_Displacement);
     i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
    
     SmartDashboard.putString("Polar Displacement", "[" + Math.sqrt(Math.pow(x_Displacement, 
@@ -129,6 +129,7 @@ public class DriveSubsystem extends SubsystemBase {
   public double getRightEncoderDistance() {
     return back_right.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse;
   }
+
 
   /**
    * Returns the currently-estimated pose of the robot.

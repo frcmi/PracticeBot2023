@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -48,7 +49,7 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem();
-  public final BalanceOnChargingStation balance = new BalanceOnChargingStation();
+  public final BalanceOnChargingStation balance = new BalanceOnChargingStation(m_robotDrive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -64,11 +65,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     Trigger xTrigger = new JoystickButton(m_driverController, XboxController.Button.kX.value);
     Trigger yTrigger = new JoystickButton(m_driverController, XboxController.Button.kY.value);
-    Trigger balanceTrigger = new JoystickButton(m_driverController, XboxController.Button.kB.value);
+    Trigger balanceTrigger = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
+    Trigger balanceEmergencyStopTrigger = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
 
     xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
     yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
-    balanceTrigger.onTrue(Commands.run(()-> doBalance()));
+    balanceTrigger.onTrue(Commands.run(balance::execute));
+    balanceEmergencyStopTrigger.onTrue(Commands.runOnce(() -> balance.end(false)));
   }
 
   /**
@@ -80,15 +83,6 @@ public class RobotContainer {
       AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
 
       return autoTrajectory.DoAutoTrajectory(m_robotDrive);
-  }
-
-  public void doBalance() {
-    //if (Math.abs(m_robotDrive.getPitch()) > 7.5) {
-      while (Math.abs(m_robotDrive.getPitch()) > 3.0) {
-        balance.DoBalanceOnChargingStation(m_robotDrive).execute();
-        Timer.delay(0.005);
-      }
-    //}
   }
 
 }

@@ -24,7 +24,6 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private BalanceOnChargingStation m_balanceOnChargingStation = new BalanceOnChargingStation();
   
 
   /**
@@ -65,7 +64,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    m_doBalanceOnChargingStation = m_balanceOnChargingStation.DoBalanceOnChargingStation(m_robotContainer.m_robotDrive);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",

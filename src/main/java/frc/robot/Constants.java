@@ -59,6 +59,9 @@ public final class Constants {
     public static final double kTurnD = 0.0;
     public static final double kTurnToleranceDeg = 1.0;
     public static final double kTurnRateToleranceDegPerS = 1.0;
+
+    // Placeholder Mass
+    public static final double kMass = 100.0;
   }
   
   public static final class PneumaticConstants {
