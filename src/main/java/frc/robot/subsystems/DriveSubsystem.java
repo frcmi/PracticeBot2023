@@ -38,7 +38,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(front_right, back_right);
 
   // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  public final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
 
   // The gyro sensor (Pigeon 2)
@@ -83,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     resetEncoders();
     zeroHeading();
-    m_odometry = new DifferentialDriveOdometry(getHeading(), 0, 0, new Pose2d()); 
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0, new Pose2d()); 
   }
 
   @Override
@@ -105,7 +105,7 @@ public class DriveSubsystem extends SubsystemBase {
     x_Displacement = m_odometry.getPoseMeters().getX(); 
     y_Displacement = m_odometry.getPoseMeters().getY();
     
-    System.out.println("X-Displacement: " + x_Displacement + "\rY-Displacement: " + y_Displacement);
+    // System.out.println("X-Displacement: " + x_Displacement + "\rY-Displacement: " + y_Displacement);
     i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
    
     SmartDashboard.putString("Polar Displacement", "[" + Math.sqrt(Math.pow(x_Displacement, 
@@ -113,13 +113,8 @@ public class DriveSubsystem extends SubsystemBase {
     + Math.atan(y_Displacement/x_Displacement) + "]");
 
     SmartDashboard.putString("Rectangular Displacement", i_j_Displacement);
-    
-    SmartDashboard.putNumber("Gyro", getHeading().getDegrees());
-    SmartDashboard.putNumber("Left Encoder", getLeftEncoderDistance());
-    SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
-    SmartDashboard.putNumber("x-displacement", x_Displacement);
-    SmartDashboard.putNumber("y-displacement", y_Displacement);
-    SmartDashboard.putNumber("orientation", m_odometry.getPoseMeters().getRotation().getDegrees());
+    m_drive.feed();
+    m_drive.feedWatchdog();
   }
 
   public double getLeftEncoderDistance() {
@@ -187,9 +182,10 @@ public class DriveSubsystem extends SubsystemBase {
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
-    System.out.println("Left Volts: " + leftVolts + "\rRight Volts: " + rightVolts);
-    System.out.println("Speeds: " + getWheelSpeeds());
+    // System.out.println("Left Volts: " + leftVolts + "\rRight Volts: " + rightVolts);
+    // System.out.println("Speeds: " + getWheelSpeeds());
     m_drive.feed();
+    m_drive.feedWatchdog();
   }
 
   /** Resets the drive encoders to currently read a position of 0. */

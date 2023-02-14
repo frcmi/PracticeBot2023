@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.DriveConstants;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.BalanceOnChargingStation;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,11 +17,8 @@ import frc.robot.commands.BalanceOnChargingStation;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private Command m_doBalanceOnChargingStation;
 
   private RobotContainer m_robotContainer;
-
-  private BalanceOnChargingStation m_balanceOnChargingStation = new BalanceOnChargingStation();
   
 
   /**
@@ -65,7 +59,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    m_doBalanceOnChargingStation = m_balanceOnChargingStation.DoBalanceOnChargingStation(m_robotContainer.m_robotDrive);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -83,11 +76,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    m_robotContainer.m_robotDrive.feed();
-
-    if(true /* insert actual condition here */) {
-      m_doBalanceOnChargingStation.schedule();
-    }
+    m_robotContainer.m_robotDrive.m_drive.feed();
+    m_robotContainer.m_robotDrive.m_drive.feedWatchdog();
   }
 
   @Override
@@ -104,9 +94,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if (m_robotContainer.balanceSub.toggle)
+      return;
     var controller = m_robotContainer.m_driverController;
     var drive = m_robotContainer.m_robotDrive;
-    var pneumatics = m_robotContainer.pneumatics;
+    //var pneumatics = m_robotContainer.pneumatics;
 
     double fwd = -controller.getLeftY() * DriveConstants.kMovementMultiplier;
     double rot = -controller.getRightX() * DriveConstants.kMovementMultiplier;
@@ -114,7 +106,7 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(fwd, rot);
 
     if (controller.getAButtonPressed()) {
-      pneumatics.togglePiston();
+      //pneumatics.togglePiston();
     }
   }
 

@@ -16,7 +16,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class DriveConstants {
-    public static final double kMovementMultiplier = 0.5;
+    public static final double kMovementMultiplier = 0.4;
 
     public static final int kLeftMotor1Port = 5;
     public static final int kLeftMotor2Port = 4;

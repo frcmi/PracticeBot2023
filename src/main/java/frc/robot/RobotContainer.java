@@ -27,13 +27,14 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoTrajectory;
 import frc.robot.commands.Autos;
-import frc.robot.commands.BalanceOnChargingStation;
+import frc.robot.subsystems.BalanceSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -48,7 +49,7 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem();
-  public final BalanceOnChargingStation balance = new BalanceOnChargingStation();
+  public final BalanceSubsystem balanceSub = new BalanceSubsystem(m_robotDrive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -61,14 +62,15 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
    * {@link JoystickButton}.
    */
-  private void configureButtonBindings() {
+   private void configureButtonBindings() {
     Trigger xTrigger = new JoystickButton(m_driverController, XboxController.Button.kX.value);
     Trigger yTrigger = new JoystickButton(m_driverController, XboxController.Button.kY.value);
     Trigger balanceTrigger = new JoystickButton(m_driverController, XboxController.Button.kB.value);
 
     xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
     yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
-    balanceTrigger.onTrue(Commands.run(()-> doBalance()));
+    balanceTrigger.onTrue(Commands.runOnce(() -> balanceSub.setToggle(true)));
+    balanceTrigger.onFalse(Commands.runOnce(() -> balanceSub.setToggle(false)));
   }
 
   /**
@@ -81,14 +83,4 @@ public class RobotContainer {
 
       return autoTrajectory.DoAutoTrajectory(m_robotDrive);
   }
-
-  public void doBalance() {
-    //if (Math.abs(m_robotDrive.getPitch()) > 7.5) {
-      while (Math.abs(m_robotDrive.getPitch()) > 3.0) {
-        balance.DoBalanceOnChargingStation(m_robotDrive).execute();
-        Timer.delay(0.005);
-      }
-    //}
-  }
-
 }
