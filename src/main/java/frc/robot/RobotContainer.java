@@ -46,14 +46,14 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem();
-  public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
+  // public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. 
-   * @throws IOException*/
-  public RobotContainer() throws IOException {
-    configureButtonBindings();
-    m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
-  }
+  // /** The container for the robot. Contains subsystems, OI devices, and commands. 
+  //  * @throws IOException*/
+  // public RobotContainer() throws IOException {
+  //   configureButtonBindings();
+  //   m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
+  // }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by

@@ -77,11 +77,11 @@ public class AutoTrajectory extends CommandBase {
                 m_robotDrive::tankDriveVolts,
                 m_robotDrive);
 
-        m_robotDrive.resetOdometry(smallPath.getInitialPose());
+        m_robotDrive.resetPoseEstimator(smallPath.getInitialPose());
     }
 
     public CommandBase DoAutoTrajectory(DriveSubsystem driveSubsystem) {
-        return Commands.sequence(driveSubsystem.resetOdometryCmd(new Pose2d()), ramseteCommand, driveSubsystem.stop());
+        return Commands.sequence(driveSubsystem.resetPoseEstimatorCmd(new Pose2d()), ramseteCommand, driveSubsystem.stop());
     }
     
 }

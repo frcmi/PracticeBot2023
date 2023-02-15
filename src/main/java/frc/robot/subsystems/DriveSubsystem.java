@@ -4,11 +4,14 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -20,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -40,9 +44,9 @@ public class DriveSubsystem extends SubsystemBase {
   WPI_TalonFX back_right = new WPI_TalonFX(DriveConstants.kRightMotor2Port);
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(front_right, back_right);
 
-  // The robot's drive
+  // The robot's drive and photonvision
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
-
+  public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
 
   // The gyro sensor (Pigeon 2)
   private final AHRS navX = new AHRS();
@@ -50,7 +54,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final Gyro m_gyro = navX;
 
   // Odometry class for tracking robot pose
-  private final DifferentialDriveOdometry m_odometry;
+  //private final DifferentialDriveOdometry m_odometry;
 
   //Field2d Sim
   private final Field2d m_field = new Field2d();
@@ -61,8 +65,20 @@ public class DriveSubsystem extends SubsystemBase {
   private final double two = 2.0; 
   private String i_j_Displacement = "";
 
-  /** Creates a new DriveSubsystem. */
+   /* Here we use DifferentialDrivePoseEstimator so that we can fuse odometry readings. The
+  numbers used  below are robot specific, and should be tuned. */
+  private final DifferentialDrivePoseEstimator m_poseEstimator =
+      new DifferentialDrivePoseEstimator(
+          DriveConstants.kDriveKinematics,
+          m_gyro.getRotation2d(),
+          getLeftEncoderDistance(),
+          getRightEncoderDistance(),
+          new Pose2d());
+
+  /** Creates a new DriveSubsystem. **/
   public DriveSubsystem() {
+    m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
+
     front_left.configFactoryDefault();
     back_left.configFactoryDefault();
     front_right.configFactoryDefault();
@@ -86,22 +102,17 @@ public class DriveSubsystem extends SubsystemBase {
 
     resetEncoders();
     zeroHeading();
-    m_odometry = new DifferentialDriveOdometry(getHeading(), 0, 0, new Pose2d()); 
+    //m_odometry = new DifferentialDriveOdometry(getHeading(), 0, 0, new Pose2d()); 
   }
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block
-    m_odometry.update(
-        getHeading(), 
-        getLeftEncoderDistance(), 
-        getRightEncoderDistance());
-
-    Pose2d pose = m_odometry.getPoseMeters();
+    updateOdometry();
+    Pose2d pose = m_poseEstimator.getEstimatedPosition();
     m_field.setRobotPose(pose);
 
-    x_Displacement = m_odometry.getPoseMeters().getX(); 
-    y_Displacement = m_odometry.getPoseMeters().getY(); 
+    x_Displacement = pose.getX(); 
+    y_Displacement = pose.getY(); 
     i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
    
     SmartDashboard.putString("Polar Displacement", "[" + Math.sqrt(Math.pow(x_Displacement, 
@@ -115,9 +126,30 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
     SmartDashboard.putNumber("x-displacement", x_Displacement);
     SmartDashboard.putNumber("y-displacement", y_Displacement);
-    SmartDashboard.putNumber("orientation", m_odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("orientation", pose.getRotation().getDegrees());
   }
 
+    /** Updates the field-relative position. */
+    public void updateOdometry() {
+      m_poseEstimator.update(
+              m_gyro.getRotation2d(), getLeftEncoderDistance(), getRightEncoderDistance());
+
+      Optional<EstimatedRobotPose> result =
+              m_PhotonvisionSubsystem.getEstimatedGlobalPose(m_poseEstimator.getEstimatedPosition());
+
+      if (result.isPresent()) {
+          EstimatedRobotPose camPose = result.get();
+          m_poseEstimator.addVisionMeasurement(
+                  camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+          m_field.getObject("Cam Est Pos").setPose(camPose.estimatedPose.toPose2d());
+      } else {
+          // move it way off the screen to make it disappear
+          m_field.getObject("Cam Est Pos").setPose(new Pose2d(-100, -100, new Rotation2d()));
+      }
+
+      m_field.getObject("Actual Pos").setPose(getPose());
+      m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
+  }
   public double getLeftEncoderDistance() {
     return -front_left.getSelectedSensorPosition() * DriveConstants.kEncoderDistancePerPulse;
   }
@@ -132,11 +164,12 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    Optional<EstimatedRobotPose> EstimatedPhotovisionPose =
-      PhotonvisionSubsystem.getEstimatedGlobalPose(pose);
+    // Optional<EstimatedRobotPose> EstimatedPhotovisionPose =
+    //   PhotonvisionSubsystem.getEstimatedGlobalPose(pose);
     
-    return m_odometry.getPoseMeters();
-  }
+    return m_poseEstimator.getEstimatedPosition();
+   }
+
 
   /**
    * Returns the current wheel speeds of the robot.
@@ -149,8 +182,8 @@ public class DriveSubsystem extends SubsystemBase {
     front_right.getSelectedSensorVelocity() * DriveConstants.kEncoderDistancePerPulse * 10);
   }
 
-  public CommandBase resetOdometryCmd(Pose2d pose) {
-    return Commands.runOnce(() -> resetOdometry(pose), this);
+  public CommandBase resetPoseEstimatorCmd(Pose2d pose) {
+    return Commands.runOnce(() -> resetPoseEstimator(pose), this);
   }
 
   /**
@@ -158,9 +191,9 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @param pose The pose to which to set the odometry.
    */
-  public void resetOdometry(Pose2d pose) {
+  public void resetPoseEstimator(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(getHeading(), 0, 0, pose);
+    m_poseEstimator.resetPosition(getHeading(), 0, 0, pose);
   }
 
   /**
