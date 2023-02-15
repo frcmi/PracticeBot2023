@@ -24,7 +24,7 @@ public class BalanceOnChargingStation extends CommandBase {
     protected boolean wasMoving;
     protected boolean hasNotMoved1s = false;
     //TEMP VALUE
-    protected double balanceSpeed = 0.5;
+    protected double balanceSpeed = 0.375;
 
     
     //protected DriveSubsystem m_robotDrive;
@@ -46,14 +46,14 @@ public class BalanceOnChargingStation extends CommandBase {
             isMoving = true;
             balanceRatio = Math.abs(currentAngle / maxAngle);
             if (balanceRatio > 0) {
-                driveSubsystem.arcadeDrive(-1 * balanceRatio * balanceSpeed, 0);
+                driveSubsystem.arcadeDrive(/*-1 * */ balanceRatio * balanceSpeed, 0);
             } else if (balanceRatio < 0) {
-                driveSubsystem.arcadeDrive(balanceRatio * balanceSpeed, 0);
+                driveSubsystem.arcadeDrive(-1 * balanceRatio * balanceSpeed, 0);
             }
         } else {
             isMoving = false;
             if (wasMoving = false) {
-                hibernate();
+                end(false);
             } else {
                 Timer timer = new Timer();
                 timer.schedule(checkIfMoving(), 1000);
@@ -70,7 +70,7 @@ public class BalanceOnChargingStation extends CommandBase {
             @Override
             public void run() {
                 if (isMoving == false && Math.abs(currentAngle) > balancePoint) {
-                    hibernate();
+                    end(false);
                 } else {
                     isMoving = true;
                 }

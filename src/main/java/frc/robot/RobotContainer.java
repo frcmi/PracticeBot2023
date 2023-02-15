@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+import java.util.Set;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -79,10 +81,32 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
+  public void scheduleBalance() {
+    Commands.run(balance::execute);
+  }
+
   public Command getAutonomousCommand() {
+      /* 
       AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
 
       return autoTrajectory.DoAutoTrajectory(m_robotDrive);
+      */
+      return new Command() {
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+            m_robotDrive.arcadeDrive(1, 0);
+        }
+
+        @Override
+        public Set<Subsystem> getRequirements() {
+          // TODO Auto-generated method stub
+          return null;
+        }
+      
+      };
   }
 
 }
