@@ -117,11 +117,6 @@ public class Robot extends TimedRobot {
     if (controller.getAButtonPressed()) {
       pneumatics.togglePiston();
     }
-
-    while(m_robotContainer.m_driverController.getBButtonPressed()) {
-      m_doBalanceOnChargingStation.execute();
-      Timer.delay(0.005);
-    }
   }
 
   @Override

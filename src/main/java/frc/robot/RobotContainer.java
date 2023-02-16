@@ -26,6 +26,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoTrajectory;
 import frc.robot.commands.Autos;
+import frc.robot.commands.BalanceOnChargingStation;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +45,7 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem();
+  public final BalanceOnChargingStation balancer = new BalanceOnChargingStation();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -59,9 +61,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     Trigger xTrigger = new JoystickButton(m_driverController, XboxController.Button.kX.value);
     Trigger yTrigger = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+    Trigger bTrigger = new JoystickButton(m_driverController, XboxController.Button.kB.value);
 
     xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
     yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
+    bTrigger.whileTrue(balancer.DoBalanceOnChargingStation(m_robotDrive));
+
   }
 
   /**
