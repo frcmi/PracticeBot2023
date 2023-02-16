@@ -163,10 +163,7 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @return The pose.
    */
-  public Pose2d getPose() {
-    // Optional<EstimatedRobotPose> EstimatedPhotovisionPose =
-    //   PhotonvisionSubsystem.getEstimatedGlobalPose(pose);
-    
+  public Pose2d getPose() { 
     return m_poseEstimator.getEstimatedPosition();
    }
 
