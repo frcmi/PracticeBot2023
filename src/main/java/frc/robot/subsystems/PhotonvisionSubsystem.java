@@ -29,7 +29,7 @@ public class PhotonvisionSubsystem extends SubsystemBase {
   PhotonPoseEstimator photonPoseEstimator;
 
   private final Field2d m_field = new Field2d();
-  private final PhotonCamera camera = new PhotonCamera("photonvision");
+  public final PhotonCamera camera = new PhotonCamera("photonvision");
   public PhotonvisionSubsystem(){
     SmartDashboard.putData("PhotonVision", m_field);
 
@@ -89,12 +89,12 @@ public class PhotonvisionSubsystem extends SubsystemBase {
     return false;
   }
 
-  @Override
-  public void periodic() {
+  public PhotonTrackedTarget getTargets() {
     var result = camera.getLatestResult();
     if(result.hasTargets()) {
-      List<PhotonTrackedTarget> targets = result.getTargets();
+      return result.getBestTarget();
     }
+    return null;
     // This method will be called once per scheduler run
   }
 

@@ -8,6 +8,8 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -24,9 +26,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
+import org.opencv.photo.Photo;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -48,6 +53,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
   public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
 
+
   // The gyro sensor (Pigeon 2)
   private final AHRS navX = new AHRS();
   // private final  pigeon = new WPI_Pigeon2(DriveConstants.kPigeonPort);
@@ -65,6 +71,8 @@ public class DriveSubsystem extends SubsystemBase {
   private final double two = 2.0; 
   private String i_j_Displacement = "";
 
+  Pose2d pose;
+
    /* Here we use DifferentialDrivePoseEstimator so that we can fuse odometry readings. The
   numbers used  below are robot specific, and should be tuned. */
   private final DifferentialDrivePoseEstimator m_poseEstimator =
@@ -73,11 +81,13 @@ public class DriveSubsystem extends SubsystemBase {
           m_gyro.getRotation2d(),
           getLeftEncoderDistance(),
           getRightEncoderDistance(),
-          new Pose2d());
+          getInitialPose());
 
   /** Creates a new DriveSubsystem. **/
   public DriveSubsystem() {
+
     m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
+    pose = getInitialPose();
 
     front_left.configFactoryDefault();
     back_left.configFactoryDefault();
@@ -108,7 +118,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    Pose2d pose = m_poseEstimator.getEstimatedPosition();
+    pose = m_PhotonvisionSubsystem.getEstimatedGlobalPose(pose).get().estimatedPose.toPose2d();
     m_field.setRobotPose(pose);
 
     x_Displacement = pose.getX(); 
@@ -129,22 +139,23 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("orientation", pose.getRotation().getDegrees());
   }
 
+  public Pose2d getInitialPose() {
+    PhotonTrackedTarget target = m_PhotonvisionSubsystem.camera.getLatestResult().getBestTarget();
+    Transform3d transform = target.getBestCameraToTarget();
+    return new Pose2d(transform.getX(), transform.getY(), transform.getRotation().toRotation2d());
+  }
     /** Updates the field-relative position. */
     public void updateOdometry() {
       m_poseEstimator.update(
               m_gyro.getRotation2d(), getLeftEncoderDistance(), getRightEncoderDistance());
-
-      Optional<EstimatedRobotPose> result =
-              m_PhotonvisionSubsystem.getEstimatedGlobalPose(m_poseEstimator.getEstimatedPosition());
-
+      Optional<EstimatedRobotPose> result = 
+          m_PhotonvisionSubsystem.getEstimatedGlobalPose(m_poseEstimator.getEstimatedPosition());    
+      
       if (result.isPresent()) {
-          EstimatedRobotPose camPose = result.get();
-          m_poseEstimator.addVisionMeasurement(
-                  camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-          m_field.getObject("Cam Est Pos").setPose(camPose.estimatedPose.toPose2d());
-      } else {
-          // move it way off the screen to make it disappear
-          m_field.getObject("Cam Est Pos").setPose(new Pose2d(-100, -100, new Rotation2d()));
+        EstimatedRobotPose camPose = result.get();
+        m_poseEstimator.addVisionMeasurement(
+                pose, camPose.timestampSeconds);
+        m_field.getObject("Cam Est Pos").setPose(camPose.estimatedPose.toPose2d());
       }
 
       m_field.getObject("Actual Pos").setPose(getPose());
