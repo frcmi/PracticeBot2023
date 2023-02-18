@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     var controller = m_robotContainer.m_driverController;
     var drive = m_robotContainer.m_robotDrive;
-    var pneumatics = m_robotContainer.pneumatics;
+    // var pneumatics = m_robotContainer.pneumatics;
 
     double fwd = -controller.getLeftY() * DriveConstants.kMovementMultiplier;
     double rot = -controller.getRightX() * DriveConstants.kMovementMultiplier;
@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(fwd, rot);
 
     if (controller.getAButtonPressed()) {
-      pneumatics.togglePiston();
+      // pneumatics.togglePiston();
     }
   }
 

@@ -15,6 +15,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -28,30 +29,26 @@ public class PhotonvisionSubsystem extends SubsystemBase {
   /** Creates a new PhotonvisionSubsystem. */
   PhotonPoseEstimator photonPoseEstimator;
 
-  private final Field2d m_field = new Field2d();
-  public final PhotonCamera camera = new PhotonCamera("photonvision");
-  public PhotonvisionSubsystem(){
-    SmartDashboard.putData("PhotonVision", m_field);
+  public final PhotonCamera camera = new PhotonCamera("OV5647");
 
+  public PhotonvisionSubsystem() {
     //Cam mounted facing forward, half a meter forward of center, half a meter up from center
     // THESE VALUES ARE VERY LIKELY WRONG
     Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); 
 
     // Creates the AprilFieldTagLayout
     try {
-    AprilTagFieldLayout aprilTagFieldLayout = 
-    AprilTagFieldLayout.loadFromResource("AprilTagsFields.json");
+    AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.kDefaultField.m_resourceFile);
 
     // Construct PhotonPoseEstimator
-    photonPoseEstimator = 
-    new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
-    camera, robotToCam);
+    photonPoseEstimator = new PhotonPoseEstimator(
+      aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
     } catch (IOException e) {
       // The AprilTagFieldLayout failed to load. We won't be able to estimate poses if we don't know
       // where the tags are.
       System.out.println("Failed to load AprilTagFieldLayout");
       photonPoseEstimator = null;
-  }
+    }
   }
 
   // Gets the estimated robot pose based on previous pose

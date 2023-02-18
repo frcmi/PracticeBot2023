@@ -43,18 +43,19 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive;
   public final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem();
-  public final PhotonvisionSubsystem m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
-  // public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
+  // public final PneumaticsSubsystem pneumatics;
+  public final PhotonvisionSubsystem m_PhotonvisionSubsystem;
 
   // /** The container for the robot. Contains subsystems, OI devices, and commands. 
   //  * @throws IOException*/
-  // public RobotContainer() throws IOException {
-  //   configureButtonBindings();
-  //   m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
-  // }
+  public RobotContainer() {
+    m_PhotonvisionSubsystem = new PhotonvisionSubsystem();
+    m_robotDrive = new DriveSubsystem(m_PhotonvisionSubsystem);
+
+    configureButtonBindings();
+  }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -66,8 +67,8 @@ public class RobotContainer {
     Trigger xTrigger = new JoystickButton(m_driverController, XboxController.Button.kX.value);
     Trigger yTrigger = new JoystickButton(m_driverController, XboxController.Button.kY.value);
 
-    xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
-    yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
+    // xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
+    // yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
   }
 
   /**
