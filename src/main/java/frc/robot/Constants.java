@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -59,6 +62,8 @@ public final class Constants {
     public static final double kTurnD = 0.0;
     public static final double kTurnToleranceDeg = 1.0;
     public static final double kTurnRateToleranceDegPerS = 1.0;
+
+    public static final HashMap<String, Command> eventMap = new HashMap<>();
   }
   
   public static final class PneumaticConstants {

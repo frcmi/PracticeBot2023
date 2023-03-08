@@ -46,7 +46,7 @@ public class PPTrajectoryCommand extends CommandBase {
             new InstantCommand(() -> {
               // Reset odometry for the first path you run during auto
               if(isFirstPath){
-                  mDriveSubsystem.resetOdometry(traj.getInitialPose());
+                  mDriveSubsystem.resetPoseEstimator(traj.getInitialPose());
               }
             }),
             new PPRamseteCommand(
