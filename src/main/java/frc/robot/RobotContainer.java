@@ -17,6 +17,8 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 
 //import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -31,6 +33,7 @@ import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -69,9 +72,14 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+ 
   public Command getAutonomousCommand() {
-      AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
+      // AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
 
-      return autoTrajectory.DoAutoTrajectory(m_robotDrive);
+      // return autoTrajectory.DoAutoTrajectory(m_robotDrive);
+    return m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("New Path", new PathConstraints(4, 3)));
+    //new RunCommand(() -> {System.out.println("HALp");}, m_robotDrive);
+    //m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("New Path", new PathConstraints(4, 3)));
+
   }
 }

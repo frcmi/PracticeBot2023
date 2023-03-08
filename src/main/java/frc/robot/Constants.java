@@ -40,6 +40,11 @@ public final class Constants {
 
     // Example value only - as above, this must be tuned for your drive!
     public static final double kPDriveVel = 3.7728;
+    // public static final double kPDriveVel = 3.7728;
+    // Feedforward
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kA = 0.0;
   }
 
   public static final class OIConstants {

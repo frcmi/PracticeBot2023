@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -18,6 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -25,8 +30,11 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 
 public class DriveSubsystem extends SubsystemBase {
+  private static final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA);
   // The motors on the left side of the drive.
   WPI_TalonFX front_left = new WPI_TalonFX(DriveConstants.kLeftMotor1Port);
   WPI_TalonFX back_left = new WPI_TalonFX(DriveConstants.kLeftMotor2Port);
@@ -56,6 +64,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double x_Displacement = 0.0; 
   private final double two = 2.0; 
   private String i_j_Displacement = "";
+
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -87,6 +96,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    m_drive.feed();
     // Update the odometry in the periodic block
     m_odometry.update(
         getHeading(), 
@@ -96,22 +106,16 @@ public class DriveSubsystem extends SubsystemBase {
     Pose2d pose = m_odometry.getPoseMeters();
     m_field.setRobotPose(pose);
 
-    x_Displacement = m_odometry.getPoseMeters().getX(); 
-    y_Displacement = m_odometry.getPoseMeters().getY(); 
-    i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
+    // x_Displacement = m_odometry.getPoseMeters().getX(); 
+    // y_Displacement = m_odometry.getPoseMeters().getY(); 
+    // i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
    
-    SmartDashboard.putString("Polar Displacement", "[" + Math.sqrt(Math.pow(x_Displacement, 
-    2) + Math.pow(y_Displacement, two)) + " " 
-    + Math.atan(y_Displacement/x_Displacement) + "]");
+    // SmartDashboard.putString("Polar Displacement", "[" + Math.sqrt(Math.pow(x_Displacement, 
+    // 2) + Math.pow(y_Displacement, two)) + " " 
+    // + Math.atan(y_Displacement/x_Displacement) + "]");
 
-    SmartDashboard.putString("Rectangular Displacement", i_j_Displacement);
-    
-    SmartDashboard.putNumber("Gyro", getHeading().getDegrees());
-    SmartDashboard.putNumber("Left Encoder", getLeftEncoderDistance());
-    SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
-    SmartDashboard.putNumber("x-displacement", x_Displacement);
-    SmartDashboard.putNumber("y-displacement", y_Displacement);
-    SmartDashboard.putNumber("orientation", m_odometry.getPoseMeters().getRotation().getDegrees());
+    // SmartDashboard.putString("Rectangular Displacement", i_j_Displacement);
+
   }
 
   public double getLeftEncoderDistance() {
@@ -242,6 +246,33 @@ public class DriveSubsystem extends SubsystemBase {
     front_left.feed();
     back_right.feed();
     back_left.feed();
+  }
+  public Command followTrajectoryCommand(PathPlannerTrajectory traj) {
+    return followTrajectoryCommand(traj, false);
+  }
+  
+  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    return new SequentialCommandGroup(
+        runOnce(() -> {
+          // Reset odometry for the first path you run during auto
+          // if(isFirstPath){
+          //     this.resetOdometry(traj.getInitialPose());
+          // }
+        }),
+        new PPRamseteCommand(
+            traj, 
+            this::getPose, // Pose supplier
+            new RamseteController(),
+            this.feedforward,
+            DriveConstants.kDriveKinematics,
+            this::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
+            new PIDController(0, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(0, 0, 0), // Right controller (usually the same values as left controller)
+            this::tankDriveVolts, // Voltage biconsumer
+            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            this // Requires this drive subsystem
+        )
+    );
   }
 }
 
