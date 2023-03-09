@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -34,7 +35,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
 public class DriveSubsystem extends SubsystemBase {
-  private static final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA);
   // The motors on the left side of the drive.
   WPI_TalonFX front_left = new WPI_TalonFX(DriveConstants.kLeftMotor1Port);
   WPI_TalonFX back_left = new WPI_TalonFX(DriveConstants.kLeftMotor2Port);
@@ -106,6 +107,13 @@ public class DriveSubsystem extends SubsystemBase {
     Pose2d pose = m_odometry.getPoseMeters();
     m_field.setRobotPose(pose);
 
+
+    SmartDashboard.putNumber("Left motor voltage", front_left.get());
+    SmartDashboard.putNumber("Right motor voltage", front_right.get());
+    SmartDashboard.putNumber("Left motor current", front_left.getStatorCurrent());
+    SmartDashboard.putNumber("Right motor current", front_right.getStatorCurrent());
+    SmartDashboard.putNumber("Left Encoder", getLeftEncoderDistance());
+    SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
     // x_Displacement = m_odometry.getPoseMeters().getX(); 
     // y_Displacement = m_odometry.getPoseMeters().getY(); 
     // i_j_Displacement = x_Displacement + "i + " + y_Displacement + "j"; 
@@ -183,7 +191,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
-    m_drive.feed();
+    feed();
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
@@ -255,19 +263,23 @@ public class DriveSubsystem extends SubsystemBase {
     return new SequentialCommandGroup(
         runOnce(() -> {
           // Reset odometry for the first path you run during auto
-          // if(isFirstPath){
-          //     this.resetOdometry(traj.getInitialPose());
-          // }
+          if(isFirstPath){
+              this.resetOdometry(traj.getInitialPose());
+          }
         }),
         new PPRamseteCommand(
             traj, 
-            this::getPose, // Pose supplier
-            new RamseteController(),
-            this.feedforward,
+            this::getPose,
+            new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+            new SimpleMotorFeedforward(
+                DriveConstants.ksVolts,
+                DriveConstants.kvVoltSecondsPerMeter,
+                DriveConstants.kaVoltSecondsSquaredPerMeter),
             DriveConstants.kDriveKinematics,
-            this::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
-            new PIDController(0, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-            new PIDController(0, 0, 0), // Right controller (usually the same values as left controller)
+            this::getWheelSpeeds,
+            new PIDController(AutoConstants.kTurnP, 0, 0),
+            new PIDController(AutoConstants.kTurnP, 0, 0),
+            // RamseteCommand passes volts to the callback
             this::tankDriveVolts, // Voltage biconsumer
             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             this // Requires this drive subsystem
