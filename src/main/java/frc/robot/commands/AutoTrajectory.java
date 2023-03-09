@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -57,6 +60,7 @@ public class AutoTrajectory extends CommandBase {
                 List.of(new Translation2d(1, 0)),
                 new Pose2d(2.3, 0, new Rotation2d(0)),
                 config);
+        //smallPath = PathPlanner.loadPath("Jonas", new PathConstraints(0.1, 0.05));
         
         // Trajectory goTwoMeters = goOneMeter.concatenate(goOneMeter);
         
