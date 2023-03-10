@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -31,7 +32,10 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -108,10 +112,10 @@ public class DriveSubsystem extends SubsystemBase {
     m_field.setRobotPose(pose);
 
 
-    SmartDashboard.putNumber("Left motor voltage", front_left.get());
-    SmartDashboard.putNumber("Right motor voltage", front_right.get());
-    SmartDashboard.putNumber("Left motor current", front_left.getStatorCurrent());
-    SmartDashboard.putNumber("Right motor current", front_right.getStatorCurrent());
+    SmartDashboard.putNumber("True Left Volt", front_left.get());
+    SmartDashboard.putNumber("True Right Volt", front_right.get());
+    SmartDashboard.putNumber("Left Curent", front_left.getStatorCurrent());
+    SmartDashboard.putNumber("Right Current", front_right.getStatorCurrent());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderDistance());
     SmartDashboard.putNumber("Right Encoder", getRightEncoderDistance());
     // x_Displacement = m_odometry.getPoseMeters().getX(); 
@@ -189,6 +193,9 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rightVolts the commanded right output
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
+    SmartDashboard.putNumber("Set Left Volt", leftVolts);
+    SmartDashboard.putNumber("Set Right Volt", rightVolts);
+    
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
     feed();
@@ -260,17 +267,22 @@ public class DriveSubsystem extends SubsystemBase {
   }
   
   public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    final PathPlannerTrajectory traj1 = PathPlanner.generatePath(
+    new PathConstraints(0.1, 0.05), 
+        new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)), // position, heading
+        new PathPoint(new Translation2d(1, 3.0), Rotation2d.fromDegrees(0)) // position, heading
+    );
     return new SequentialCommandGroup(
         runOnce(() -> {
           // Reset odometry for the first path you run during auto
           if(isFirstPath){
-              this.resetOdometry(traj.getInitialPose());
+              this.resetOdometry(traj1.getInitialPose());
           }
         }),
         new PPRamseteCommand(
-            traj, 
+            traj1, 
             this::getPose,
-            new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+            new RamseteController(),
             new SimpleMotorFeedforward(
                 DriveConstants.ksVolts,
                 DriveConstants.kvVoltSecondsPerMeter,
