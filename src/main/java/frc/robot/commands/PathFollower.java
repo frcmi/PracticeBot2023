@@ -15,7 +15,6 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class PathFollower extends CommandBase {
     private DriveSubsystem drivetrain;
-    private PathPlannerTrajectory path;
     private boolean firstPath;
 
     private PathPlannerTrajectory pathPlannerTrajectory;
@@ -36,14 +35,14 @@ public class PathFollower extends CommandBase {
         pathPlannerTrajectory = path;
         
         addRequirements(drivetrain);
-
+        
         // Unhandled exception: java.lang.NullPointerException: Cannot invoke "com.pathplanner.lib.PathPlannerTrajectory.sample(double)" because "this.transformedTrajectory" is null
     }
 
     @Override
     public void initialize() {
         if(firstPath)
-            drivetrain.resetOdometry(path.getInitialHolonomicPose());
+            drivetrain.resetOdometry(pathPlannerTrajectory.getInitialHolonomicPose());
         
         pathCommand = new PPRamseteCommand(
             pathPlannerTrajectory, 
@@ -61,7 +60,8 @@ public class PathFollower extends CommandBase {
             drivetrain::tankDriveVolts, // Voltage biconsumer
             false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             drivetrain // Requires this drive subsystem   
-        ); 
+        );
+        pathCommand.initialize(); 
     }
 
     @Override
