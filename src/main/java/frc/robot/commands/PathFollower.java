@@ -36,6 +36,8 @@ public class PathFollower extends CommandBase {
         pathPlannerTrajectory = path;
         
         addRequirements(drivetrain);
+
+        // Unhandled exception: java.lang.NullPointerException: Cannot invoke "com.pathplanner.lib.PathPlannerTrajectory.sample(double)" because "this.transformedTrajectory" is null
     }
 
     @Override
@@ -57,7 +59,7 @@ public class PathFollower extends CommandBase {
             new PIDController(AutoConstants.kTurnP, 0, 0),
             // RamseteCommand passes volts to the callback
             drivetrain::tankDriveVolts, // Voltage biconsumer
-            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             drivetrain // Requires this drive subsystem   
         ); 
     }

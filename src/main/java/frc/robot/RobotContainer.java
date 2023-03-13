@@ -28,6 +28,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoTrajectory;
 import frc.robot.commands.Autos;
+import frc.robot.commands.PathFollower;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,7 +78,8 @@ public class RobotContainer {
     //   AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
 
     //   return autoTrajectory.DoAutoTrajectory(m_robotDrive);
-    return m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("Jonas", new PathConstraints(0.1, 0.05)));
+    return new PathFollower(m_robotDrive, PathPlanner.loadPath("Jonas", new PathConstraints(0.1, 0.05)), false);
+    //return m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("Jonas", new PathConstraints(0.1, 0.05)));
     //new RunCommand(() -> {System.out.println("HALp");}, m_robotDrive);
     //m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("New Path", new PathConstraints(4, 3)));
 
