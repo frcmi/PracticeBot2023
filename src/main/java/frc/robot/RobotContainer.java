@@ -75,10 +75,10 @@ public class RobotContainer {
    */
  
   public Command getAutonomousCommand() {
-    //   AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
+      AutoTrajectory autoTrajectory = new AutoTrajectory(m_robotDrive);
 
-    //   return autoTrajectory.DoAutoTrajectory(m_robotDrive);
-    return new PathFollower(m_robotDrive, PathPlanner.loadPath("Jonas", new PathConstraints(0.3, 0.08)), true);
+      return autoTrajectory.DoAutoTrajectory(m_robotDrive);
+    // return new PathFollower(m_robotDrive, PathPlanner.loadPath("Forward1", new PathConstraints(0.5, 0.25)), true);
     //return m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("Jonas", new PathConstraints(0.1, 0.05)));
     //new RunCommand(() -> {System.out.println("HALp");}, m_robotDrive);
     //m_robotDrive.followTrajectoryCommand(PathPlanner.loadPath("New Path", new PathConstraints(4, 3)));

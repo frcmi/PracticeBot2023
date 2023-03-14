@@ -52,16 +52,16 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 0.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.1;
+    public static final double kMaxSpeedMetersPerSecond = 1;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
 
-    public static final double kTurnP = 0.8;
-    public static final double kTurnI = 0.0;
-    public static final double kTurnD = 0.0;
+    public static final double kTurnP = 1;
+    public static final double kTurnI = 0;
+    public static final double kTurnD = 0;
     public static final double kTurnToleranceDeg = 1.0;
     public static final double kTurnRateToleranceDegPerS = 1.0;
   }

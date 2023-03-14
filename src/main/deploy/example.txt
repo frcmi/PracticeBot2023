@@ -1,3 +1,20 @@
 Files placed in this directory will be deployed to the RoboRIO into the
 'deploy' directory in the home folder. Use the 'Filesystem.getDeployDirectory' wpilib function
 to get a proper path relative to the deploy directory.
+
+1 meter (0.3 m/s & 0.08 m/s/s):
+53.2 cm
+53.7 cm
+53.7 cm
+
+
+1 meter (0.5 m/s & 0.25 m/s/s):
+68.2 cm
+67.5 cm
+
+autotraj:
+57cm
+
+* increased speed and velocity by 2x *
+
+66cm
