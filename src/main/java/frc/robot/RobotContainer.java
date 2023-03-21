@@ -28,6 +28,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoTrajectory;
 import frc.robot.commands.Autos;
+import frc.robot.commands.TurnInPlace;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,6 +66,11 @@ public class RobotContainer {
 
     xTrigger.onTrue(Commands.run(pneumatics::extendPiston, pneumatics));
     yTrigger.onTrue(Commands.run(pneumatics::reversePiston, pneumatics));
+
+    if(m_driverController.getAButtonPressed()) {
+      new TurnInPlace(m_robotDrive, 180).execute(); 
+    }
+
   }
 
   /**
